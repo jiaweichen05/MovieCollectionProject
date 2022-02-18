@@ -82,7 +82,7 @@ public class MovieCollection
 
     private void searchTitles()
     {
-        System.out.print("Enter a tital search term: ");
+        System.out.print("Enter a title search term: ");
         String searchTerm = scanner.nextLine();
 
         // prevent case sensitivity
@@ -174,22 +174,26 @@ public class MovieCollection
         // arraylist to hold search results
         ArrayList<Movie> results = new ArrayList<Movie>();
         ArrayList<String> castList = new ArrayList<String>();
+        ArrayList<String> castList2 = new ArrayList<String>();
 
         // search through ALL movies in collection
         for (int i = 0; i < movies.size(); i++)
         {
+            boolean temp = true;
             String movieCast = movies.get(i).getCast();
-            movieCast = movieCast.toLowerCase();
+
             String[] castArray = movieCast.split("\\|");
-//            for (String k : castArray) System.out.println(k);
-            for (int j = 0; i < castArray.length; i++)
+
+            for (int j = 0; j < castArray.length; j++)
             {
-                if(!castList.contains(castArray[j])){
+                String lower = castArray[j].toLowerCase();
+                if(lower.contains(searchTerm) && !castList.contains(castArray[j])){
                     castList.add(castArray[j]);
-                }
-                if (castArray[j].indexOf(searchTerm) != -1)
-                {
-                    results.add(movies.get(i));
+                    if (temp)
+                    {
+                        results.add(movies.get(i));
+                        temp = false;
+                    }
                 }
             }
         }
@@ -211,7 +215,6 @@ public class MovieCollection
         for (int i = 0; i < castList.size(); i++)
         {
             String castMember = castList.get(i);
-
             // this will print index 0 as choice 1 in the results list; better for user!
             int choiceNum = i + 1;
 
@@ -224,12 +227,40 @@ public class MovieCollection
         int choice = scanner.nextInt();
         scanner.nextLine();
 
-        Movie selectedMovie = results.get(choice - 1);
 
+        String castPick = castList.get(choice - 1);
+        ArrayList<Movie> results2 = new ArrayList<Movie>();
+
+        for (int i = 0; i < results.size(); i++)
+        {
+            if (results.get(i).getCast().contains(castPick))
+            {
+                results2.add(results.get(i));
+            }
+        }
+
+        for (int i = 0; i < results2.size(); i++)
+        {
+            Movie print = results2.get(i);
+            // this will print index 0 as choice 1 in the results list; better for user!
+            int choiceNum = i + 1;
+
+            System.out.println("" + choiceNum + ". " + print.getTitle());
+        }
+
+        System.out.println("Which movie would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int choice2 = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = results2.get(choice2 - 1);
         displayMovieInfo(selectedMovie);
 
         System.out.println("\n ** Press Enter to Return to Main Menu **");
         scanner.nextLine();
+
+
     }
 
     private void searchKeywords()
@@ -283,7 +314,47 @@ public class MovieCollection
 
     private void listGenres()
     {
+        ArrayList<String> genresList = new ArrayList<String>();
+        ArrayList<Movie> results = new ArrayList<Movie>();
 
+        for (int i = 0; i < movies.size(); i++)
+        {
+            boolean limit = true;
+            String genres = movies.get(i).getGenres();
+            String[] genresArray = genres.split("\\|");
+
+            for (int j = 0; j < genresArray.length; j++)
+            {
+                String element = genresArray[j];
+                if (!genresList.contains(genresArray[j]))
+                {
+                    genresList.add(genresArray[j]);
+                }
+            }
+        }
+
+
+
+
+        for (int i = 0; i < movies.size(); i++)
+        {
+            boolean temp = true;
+            String movieCast = movies.get(i).getCast();
+            String[] castArray = movieCast.split("\\|");
+
+            for (int j = 0; j < castArray.length; j++)
+            {
+                String element = castArray[j];
+                if(element.contains(searchTerm) && !castList.contains(castArray[j])){
+                    castList.add(castArray[j]);
+                    if (temp)
+                    {
+                        results.add(movies.get(i));
+                        temp = false;
+                    }
+                }
+            }
+        }
     }
 
     private void listHighestRated()
